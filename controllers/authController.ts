@@ -45,8 +45,12 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password, role } = req.body;
 
+  console.log(`Login attempt - Email: ${email}, Role: ${role}`);
+
+  // Check demo users first (works even without DB)
   const demoUser = findDemoUser({ identifier: email, password, role });
   if (demoUser) {
+    console.log(`Demo user found: ${demoUser.email}`);
     return res.json({
       _id: demoUser._id,
       name: demoUser.name,
@@ -62,13 +66,17 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
+  console.log(`Database connection state: ${mongoose.connection.readyState}`);
+  
   if (mongoose.connection.readyState !== 1) {
+    console.log('Database not connected, returning error');
     return res.status(401).json({ message: 'Invalid credentials for the selected role' });
   }
 
   const user: any = await User.findOne({ email, role });
 
   if (user && (await user.matchPassword(password))) {
+    console.log(`User found in database: ${user.email}`);
     res.json({
       _id: user._id,
       name: user.name,
@@ -81,6 +89,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
       token: generateToken(user._id.toString()),
     });
   } else {
+    console.log(`Invalid credentials for email: ${email}`);
     res.status(401).json({ message: 'Invalid email or password' });
   }
 });

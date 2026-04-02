@@ -1,7 +1,22 @@
 import axios from 'axios';
 
+// Get API base URL - use window location for production, localhost for development
+const getApiUrl = () => {
+  if (typeof window === 'undefined') {
+    return 'http://localhost:3000';
+  }
+  
+  // In production (Vercel), use the same origin as the app
+  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return window.location.origin;
+  }
+  
+  // In development, use localhost:3000
+  return 'http://localhost:3000';
+};
+
 const api = axios.create({
-  baseURL: '/',
+  baseURL: getApiUrl(),
 });
 
 api.interceptors.request.use(

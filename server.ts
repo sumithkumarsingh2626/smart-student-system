@@ -40,7 +40,23 @@ const startServer = async () => {
   // Connect to Database (Non-blocking)
   connectDB();
 
-  app.use(cors());
+  // Configure CORS for production
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173',
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+    process.env.APP_URL || null,
+  ].filter(Boolean);
+
+  app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
+  
   app.use(express.json());
 
   // Socket.io logic
