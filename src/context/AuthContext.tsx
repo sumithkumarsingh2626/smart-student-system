@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../lib/api';
 
 interface AuthContextType {
   user: any | null;
@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string, role: string) => {
     try {
-      const { data } = await axios.post('/api/auth/login', { email, password, role });
+      const { data } = await api.post('/api/auth/login', { email, password, role });
       // Ensure id exists as an alias for _id
       if (data._id && !data.id) {
         data.id = data._id;
