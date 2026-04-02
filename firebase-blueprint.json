@@ -1,0 +1,168 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System user (Faculty or Student)",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["faculty", "student"] },
+        "dept": { "type": "string" }
+      },
+      "required": ["uid", "name", "email", "role"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Detailed student profile with bio-data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "admissionNo": { "type": "string" },
+        "roll": { "type": "string" },
+        "name": { "type": "string" },
+        "course": { "type": "string" },
+        "branch": { "type": "string" },
+        "semester": { "type": "string" },
+        "gender": { "type": "string" },
+        "dob": { "type": "string" },
+        "nationality": { "type": "string" },
+        "religion": { "type": "string" },
+        "entranceType": { "type": "string" },
+        "rank": { "type": "number" },
+        "seatType": { "type": "string" },
+        "categoryCaste": { "type": "string" },
+        "lastStudied": { "type": "string" },
+        "joiningDate": { "type": "string" },
+        "phone": { "type": "string" },
+        "mobile": { "type": "string" },
+        "email": { "type": "string" },
+        "bankAcc": { "type": "string" },
+        "aadhar": { "type": "string" },
+        "rationCard": { "type": "string" },
+        "scholarship": { "type": "string" },
+        "class": { "type": "string" },
+        "photo": { "type": "string" },
+        "education": {
+          "type": "object",
+          "properties": {
+            "ssc": { "type": "object" },
+            "inter": { "type": "object" }
+          }
+        },
+        "parents": {
+          "type": "object",
+          "properties": {
+            "father": { "type": "object" },
+            "mother": { "type": "object" },
+            "annualIncome": { "type": "number" },
+            "correspondenceAddress": { "type": "string" },
+            "permanentAddress": { "type": "string" }
+          }
+        },
+        "guardian": { "type": "object" },
+        "performancePresent": { "type": "object", "description": "Current semester performance metrics" },
+        "performancePast": { "type": "object", "description": "Previous semesters performance history" },
+        "backlogs": { "type": "array", "items": { "type": "object" }, "description": "List of backlog subjects" },
+        "outings": { "type": "array", "items": { "type": "object" }, "description": "History of student outings/leaves" },
+        "counselingDetails": { "type": "array", "items": { "type": "object" }, "description": "Records of counseling sessions" },
+        "disciplinaryAction": { "type": "array", "items": { "type": "object" }, "description": "History of disciplinary actions" },
+        "detainedDetails": { "type": "array", "items": { "type": "object" }, "description": "Details if the student was detained" },
+        "fees": {
+          "type": "object",
+          "properties": {
+            "total": { "type": "number" },
+            "paid": { "type": "number" },
+            "pending": { "type": "number" },
+            "status": { "type": "string" }
+          }
+        }
+      },
+      "required": ["uid", "roll", "class"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Daily attendance record",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string" },
+        "class": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["P", "A"] },
+        "subject": { "type": "string" }
+      },
+      "required": ["studentId", "class", "date", "status", "subject"]
+    },
+    "Timetable": {
+      "title": "Timetable",
+      "description": "Weekly schedule for a faculty",
+      "type": "object",
+      "properties": {
+        "facultyId": { "type": "string" },
+        "schedule": {
+          "type": "object",
+          "description": "Map of day to time slots"
+        }
+      },
+      "required": ["facultyId", "schedule"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Broadcast message from faculty",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "classes": { "type": "array", "items": { "type": "string" } },
+        "content": { "type": "string" },
+        "attachments": { "type": "array", "items": { "type": "object" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["senderId", "classes", "content", "createdAt"]
+    },
+    "SemesterResult": {
+      "title": "Semester Result",
+      "description": "Full semester exam result for a student",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "roll": { "type": "string" },
+        "class": { "type": "string" },
+        "semester": { "type": "string" },
+        "sgpa": { "type": "number" },
+        "cgpa": { "type": "number" },
+        "totalCredits": { "type": "number" },
+        "subjectsAppeared": { "type": "number" },
+        "subjectsPassed": { "type": "number" },
+        "collegeName": { "type": "string" },
+        "collegeCode": { "type": "string" },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sno": { "type": "number" },
+              "courseName": { "type": "string" },
+              "courseCode": { "type": "string" },
+              "grade": { "type": "string" },
+              "gradePoint": { "type": "number" },
+              "credits": { "type": "number" },
+              "status": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["studentId", "roll", "semester", "sgpa", "cgpa", "results"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": { "schema": "User", "description": "User profiles" },
+    "/students/{uid}": { "schema": "Student", "description": "Student specific data" },
+    "/attendance/{attendanceId}": { "schema": "Attendance", "description": "Attendance records" },
+    "/timetables/{facultyId}": { "schema": "Timetable", "description": "Faculty timetables" },
+    "/messages/{messageId}": { "schema": "Message", "description": "Broadcast messages" },
+    "/semester_results/{resultId}": { "schema": "SemesterResult", "description": "Semester exam results" }
+  }
+}

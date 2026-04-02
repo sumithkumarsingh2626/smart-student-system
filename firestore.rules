@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    // Collection: users
+    // Fields: uid, name, email, role, dept
+    //
+    // Collection: students
+    // Fields: uid, roll, class, photo, contact, fees
+    //
+    // Collection: attendance
+    // Fields: studentId, class, date, status, subject
+    //
+    // Collection: timetables
+    // Fields: facultyId, schedule
+    //
+    // Collection: messages
+    // Fields: senderId, senderName, classes, content, attachments, createdAt
+    //
+    // Collection: marks
+    // Fields: studentId, studentName, class, subject, examType, semester, score, total, createdAt
+    //
+    // Collection: semester_results
+    // Fields: studentId, studentName, roll, class, semester, sgpa, cgpa, results
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    function isFaculty() {
+      let userDoc = /databases/$(database)/documents/users/$(request.auth.uid);
+      return isAuthenticated() && 
+        ((exists(userDoc) && get(userDoc).data.role == 'faculty') ||
+         isSystemAdmin());
+    }
+
+    // Special permission for seeding demo data (only for the admin email)
+    function isSystemAdmin() {
+      return isAuthenticated() && 
+             (request.auth.token.email == "sumithkumar2626@gmail.com" || 
+              request.auth.token.email == "shumee@bits.com");
+    }
+
+    // Rules
+    match /users/{uid} {
+      // Allow reading user profiles to support login lookups (roll number, email, loginId)
+      allow read: if true;
+      allow write: if isOwner(uid) || isSystemAdmin();
+    }
+
+    match /students/{uid} {
+      // Allow getting a specific student profile for DOB verification during login
+      allow get: if true;
+      allow list: if isFaculty();
+      allow write: if isOwner(uid) || isFaculty() || isSystemAdmin();
+    }
+
+    match /attendance/{attendanceId} {
+      allow read: if isFaculty() || (isAuthenticated() && resource.data.studentId == request.auth.uid);
+      allow write: if isFaculty() || isSystemAdmin();
+    }
+
+    match /timetables/{facultyId} {
+      allow read: if isAuthenticated();
+      allow write: if isFaculty() || isSystemAdmin() || isOwner(facultyId);
+    }
+
+    match /messages/{messageId} {
+      allow read: if isAuthenticated();
+      allow write: if isFaculty() || isSystemAdmin();
+    }
+
+    match /marks/{markId} {
+      allow read: if isFaculty() || (isAuthenticated() && resource.data.studentId == request.auth.uid);
+      allow write: if isFaculty() || isSystemAdmin();
+    }
+
+    match /semester_results/{resultId} {
+      allow read: if isFaculty() || (isAuthenticated() && resource.data.studentId == request.auth.uid);
+      allow write: if isFaculty() || isSystemAdmin();
+    }
+    
+    // Allow the admin to create the test connection doc
+    match /test/connection {
+      allow read, write: if isSystemAdmin();
+    }
+  }
+}
