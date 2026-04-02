@@ -6,10 +6,14 @@ const getApiUrl = () => {
     return 'http://localhost:3000';
   }
   
-  // In production (Vercel), use empty baseURL since API routes are on same origin
-  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    console.log('🌐 Production mode - Using relative API paths');
-    return '';
+  const hostname = window.location.hostname;
+  const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+  
+  if (!isLocalhost) {
+    // Production (Vercel) - use the full origin for API calls
+    const url = `${window.location.protocol}//${window.location.host}`;
+    console.log('🌐 Production mode - API URL:', url);
+    return url;
   }
   
   // In development, use localhost:3000
@@ -18,26 +22,27 @@ const getApiUrl = () => {
   return url;
 };
 
+const baseURL = getApiUrl();
 const api = axios.create({
-  baseURL: getApiUrl(),
+  baseURL: baseURL,
 });
 
-console.log('✅ API initialized with baseURL:', api.defaults.baseURL || 'relative paths');
+console.log('✅ API initialized with baseURL:', baseURL);
 
 api.interceptors.request.use(
   (config) => {
-    // Ensure full URL construction for relative paths
-    if (!config.baseURL && !config.url?.startsWith('http')) {
-      console.log('📤 API Request:', { method: config.method, url: config.url });
-    } else {
-      console.log('📤 API Request:', { method: config.method, url: config.url, baseURL: config.baseURL });
-    }
+    const fullUrl = config.baseURL ? `${config.baseURL}${config.url}` : config.url;
+    console.log('📤 API Request:', { method: config.method, url: fullUrl });
     
     const storedUser = localStorage.getItem('smart_student_user');
     if (storedUser) {
-      const { token } = JSON.parse(storedUser);
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      try {
+        const { token } = JSON.parse(storedUser);
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      } catch (e) {
+        console.error('Error parsing stored user:', e);
       }
     }
     return config;
@@ -55,9 +60,18 @@ api.interceptors.response.use(
   (error) => {
     console.error('❌ API Error:', { 
       status: error.response?.status, 
+      statusText: error.response?.statusText,
       message: error.response?.data?.message,
       url: error.config?.url,
-      error: error.message 
+      fullUrl: error.config?.baseURL ? `${error.config.baseURL}${error.config.url}` : error.config?.url,
+      error: error.message,
+      code: error.code,
+    });
+    return Promise.reject(error);
+  }
+);
+
+export default api;
     });
     return Promise.reject(error);
   }
