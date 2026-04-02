@@ -35,7 +35,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string, role: string) => {
     try {
+      console.log('🔐 Login attempt:', { email, role, apiBaseURL: api.defaults.baseURL });
+      
       const { data } = await api.post('/api/auth/login', { email, password, role });
+      
+      console.log('✅ Login successful:', { email, role });
+      
       // Ensure id exists as an alias for _id
       if (data._id && !data.id) {
         data.id = data._id;
@@ -44,7 +49,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(data);
       setProfile(data);
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Login failed');
+      console.error('❌ Login error:', {
+        status: error.response?.status,
+        message: error.response?.data?.message,
+        fullError: error.message,
+        url: error.config?.url,
+      });
+      throw new Error(error.response?.data?.message || error.message || 'Login failed');
     }
   };
 
