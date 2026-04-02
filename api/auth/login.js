@@ -1,4 +1,8 @@
-export default function handler(req, res) {
+console.log('[VERCEL API] login.js handler file loaded');
+
+module.exports = function handler(req, res) {
+  console.log('[VERCEL] Handler invoked:', { method: req.method, url: req.url, path: req.path });
+
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -9,17 +13,19 @@ export default function handler(req, res) {
   );
 
   if (req.method === 'OPTIONS') {
+    console.log('[VERCEL] Responding to OPTIONS');
     res.status(200).end();
     return;
   }
 
   if (req.method !== 'POST') {
+    console.log('[VERCEL] Invalid method:', req.method);
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { email, password, role } = req.body;
+  const { email, password, role } = req.body || {};
 
-  console.log(`🔐 [API] Login attempt - Email/Roll: ${email}, Password: ${password}, Role: ${role}`);
+  console.log(`🔐 [VERCEL API] Login attempt - Email: ${email}, Password: ${password}, Role: ${role}`);
 
   // Demo users
   const demoUsers = [
