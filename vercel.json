@@ -5,18 +5,8 @@
   "env": {
     "NODE_ENV": "production"
   },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/server.ts"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
   "functions": {
-    "server.ts": {
+    "api/**/*.ts": {
       "runtime": "nodejs18.x"
     }
   }

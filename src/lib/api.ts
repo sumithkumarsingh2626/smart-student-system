@@ -6,11 +6,10 @@ const getApiUrl = () => {
     return 'http://localhost:3000';
   }
   
-  // In production (Vercel), use the same origin as the app
+  // In production (Vercel), use empty baseURL since API routes are on same origin
   if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    const url = window.location.origin;
-    console.log('🌐 Production API URL:', url);
-    return url;
+    console.log('🌐 Production mode - Using relative API paths');
+    return '';
   }
   
   // In development, use localhost:3000
@@ -23,11 +22,17 @@ const api = axios.create({
   baseURL: getApiUrl(),
 });
 
-console.log('✅ API initialized with baseURL:', api.defaults.baseURL);
+console.log('✅ API initialized with baseURL:', api.defaults.baseURL || 'relative paths');
 
 api.interceptors.request.use(
   (config) => {
-    console.log('📤 API Request:', { method: config.method, url: config.url });
+    // Ensure full URL construction for relative paths
+    if (!config.baseURL && !config.url?.startsWith('http')) {
+      console.log('📤 API Request:', { method: config.method, url: config.url });
+    } else {
+      console.log('📤 API Request:', { method: config.method, url: config.url, baseURL: config.baseURL });
+    }
+    
     const storedUser = localStorage.getItem('smart_student_user');
     if (storedUser) {
       const { token } = JSON.parse(storedUser);
@@ -44,13 +49,19 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    console.log('📥 API Response:', { status: response.status, url: response.config.url });
+    console.log('📥 API Response:', { status: response.status, statusText: response.statusText });
     return response;
   },
   (error) => {
-    console.error('❌ API Error:', { status: error.response?.status, url: error.config?.url });
+    console.error('❌ API Error:', { 
+      status: error.response?.status, 
+      message: error.response?.data?.message,
+      url: error.config?.url,
+      error: error.message 
+    });
     return Promise.reject(error);
   }
 );
 
 export default api;
+
