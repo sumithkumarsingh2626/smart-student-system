@@ -1,16 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "public": true,
-  "env": {
-    "NODE_ENV": "production"
-  },
   "functions": {
     "api/**/*.{js,ts}": {
-      "runtime": "nodejs18.x",
-      "memory": 1024,
       "maxDuration": 30
     }
   },
