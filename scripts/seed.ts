@@ -64,7 +64,7 @@ const seed = async () => {
     // Create Student
     const student = await User.create({
       name: 'John Doe',
-      email: 'CS2626',
+      email: 'JS2626',
       password: '2626',
       role: 'student',
       classId: class1._id
