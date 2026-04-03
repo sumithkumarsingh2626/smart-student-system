@@ -76,7 +76,7 @@ export const seedData = async () => {
       role: 'student',
       dept: 'Engineering',
       roll: 'SJ2626',
-      class: '2-A'
+      class: '3-C'
     });
 
     // 3. Create Student Profile
@@ -98,7 +98,7 @@ export const seedData = async () => {
     await setDoc(doc(db, 'students', demoStudentUid), {
       uid: demoStudentUid,
       roll: 'SJ2626',
-      class: '2-A',
+      class: '3-C',
       photo: '',
       dob: '2626',
       contact: '+91 1234567890',
@@ -273,7 +273,7 @@ export const seedData = async () => {
       studentId: demoStudentUid,
       studentName: 'Demo Student',
       roll: 'SH2026001',
-      class: '2-A',
+      class: '3-C',
       semester: 'Semester 1',
       sgpa: 8.12,
       cgpa: 8.12,

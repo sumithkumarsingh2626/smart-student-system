@@ -46,7 +46,7 @@ const seed = async () => {
 
     // Create Class
     const class1 = await Class.create({
-      name: '3-A',
+      name: '3-C',
       department: 'Computer Science',
       year: '3rd Year',
       faculty: [faculty._id],
@@ -67,7 +67,10 @@ const seed = async () => {
       email: 'JS2626',
       password: '2626',
       role: 'student',
-      classId: class1._id
+      classId: class1._id,
+      class: '3-C',
+      roll: 'JS2626',
+      dob: '2005-01-01',
     });
 
     // Add student to class
