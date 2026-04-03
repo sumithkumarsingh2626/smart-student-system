@@ -44,6 +44,11 @@ const formatMessageTimestamp = (value: any) => {
   return 'Just now';
 };
 
+const isFreeTimetableEntry = (value: string | undefined) => {
+  const normalized = (value || '').trim().toUpperCase();
+  return !normalized || normalized === 'FREE' || normalized === '--';
+};
+
 // --- Sub-Components ---
 
 const Sidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
@@ -566,6 +571,7 @@ const Messages = () => {
 const Timetable = () => {
   const { profile } = useAuth();
   const [timetable, setTimetable] = useState<any>(null);
+  const [subjectAllocations, setSubjectAllocations] = useState<any[]>([]);
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const timeSlots = [
@@ -581,30 +587,27 @@ const Timetable = () => {
         const res = await axios.get(`/api/timetable/${profile.classId}`);
         if (res.data && res.data.schedule) {
           setTimetable(res.data.schedule);
+          setSubjectAllocations(Array.isArray(res.data.subjectAllocations) ? res.data.subjectAllocations : []);
         } else {
-          // Fallback to demo data if no timetable found
-          const demoTimetable: any = {};
-          days.forEach(day => {
-            demoTimetable[day] = timeSlots.map(t => ({
-              time: t,
-              subject: t === '12:30-01:10' ? 'LUNCH' : (Math.random() > 0.3 ? 'CN' : 'FREE'),
-              room: t === '12:30-01:10' ? '-' : '302'
-            }));
-          });
-          setTimetable(demoTimetable);
+          setTimetable(null);
+          setSubjectAllocations([]);
         }
       } catch (error) {
         console.error('Error fetching timetable:', error);
+        setTimetable(null);
+        setSubjectAllocations([]);
       }
     };
     fetchTimetable();
   }, [profile]);
 
+  const classLabel = profile?.class || profile?.classId || 'your class';
+
   return (
     <div className="dashboard-page dashboard-page--wide">
       <div className="mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Class Timetable</h1>
-        <p className="text-zinc-500">Weekly schedule for class {profile?.class}</p>
+        <p className="text-zinc-500">Weekly schedule for class {classLabel}</p>
       </div>
 
       <div className="dashboard-table-shell rounded-3xl border border-zinc-800 bg-zinc-900 shadow-2xl">
@@ -630,6 +633,7 @@ const Timetable = () => {
                 {timeSlots.map((slot, i) => {
                   const data = timetable?.[day]?.find((s: any) => s.time === slot);
                   const isLunch = slot === '12:30-01:10';
+                  const isFree = isFreeTimetableEntry(data?.subject);
                   
                   return (
                     <td key={i} className={cn(
@@ -642,11 +646,17 @@ const Timetable = () => {
                         <div className="space-y-1">
                           <p className={cn(
                             "text-sm font-bold",
-                            data.subject === 'FREE' ? "text-zinc-600" : "text-zinc-100"
+                            isFree ? "text-zinc-600" : "text-zinc-100"
                           )}>
                             {data.subject}
                           </p>
-                          {data.subject !== 'FREE' && data.room && (
+                          {!isFree && data.subjectName && data.subjectName !== data.subject && (
+                            <p className="text-[10px] text-zinc-500 font-medium">{data.subjectName}</p>
+                          )}
+                          {!isFree && data.facultyName && (
+                            <p className="text-[10px] text-zinc-400 font-medium">{data.facultyName}</p>
+                          )}
+                          {!isFree && data.room && (
                             <p className="text-[10px] text-zinc-500 font-medium">Room {data.room}</p>
                           )}
                         </div>
@@ -661,6 +671,39 @@ const Timetable = () => {
           </tbody>
         </table>
       </div>
+
+      {subjectAllocations.length > 0 && (
+        <div className="mt-8 rounded-3xl border border-zinc-800 bg-zinc-900 shadow-2xl">
+          <div className="p-5 sm:p-6 lg:p-8 border-b border-zinc-800">
+            <h2 className="text-xl font-bold text-zinc-100">Subject Allocation</h2>
+            <p className="mt-1 text-sm text-zinc-500">Faculty handling the subjects for class {classLabel}</p>
+          </div>
+
+          <div className="dashboard-table-shell">
+            <table className="dashboard-table w-full text-sm text-left">
+              <thead>
+                <tr className="border-b border-zinc-800">
+                  <th className="p-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500">Code</th>
+                  <th className="p-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500">Subject</th>
+                  <th className="p-4 text-[10px] font-bold uppercase tracking-widest text-zinc-500">Faculty Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                {subjectAllocations.map((allocation, index) => (
+                  <tr
+                    key={`${allocation.code}-${index}`}
+                    className="border-b border-zinc-800/80 last:border-0"
+                  >
+                    <td className="p-4 font-semibold text-zinc-100">{allocation.code}</td>
+                    <td className="p-4 text-zinc-300">{allocation.subject}</td>
+                    <td className="p-4 text-zinc-400">{allocation.facultyName || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

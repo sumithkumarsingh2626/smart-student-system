@@ -1,0 +1,191 @@
+export const timetableDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+export const timetableTimeSlots = [
+  '09:10-10:00',
+  '10:00-10:50',
+  '10:50-11:40',
+  '11:40-12:30',
+  '12:30-01:10',
+  '01:10-02:00',
+  '02:00-02:50',
+  '02:50-03:40',
+  '03:40-04:30',
+];
+
+const createEntry = ({
+  time,
+  subject,
+  label = subject,
+  subjectName = '',
+  facultyName = '',
+  room = '',
+  className = '',
+}) => ({
+  time,
+  subject,
+  label,
+  subjectName,
+  facultyName,
+  room,
+  class: className,
+});
+
+const demoClassTimetables = {
+  '2-A': {
+    className: '2-A',
+    schedule: {
+      Monday: [
+        createEntry({ time: '09:10-10:00', subject: 'Data Structures', className: '2-A', room: '301' }),
+        createEntry({ time: '10:00-10:50', subject: 'Algorithms', className: '2-A', room: '302' }),
+        createEntry({ time: '10:50-11:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '11:40-12:30', subject: 'Operating Systems', className: '2-A', room: '301' }),
+        createEntry({ time: '01:10-02:00', subject: 'Database Systems', className: '2-A', room: '301' }),
+        createEntry({ time: '02:00-02:50', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '02:50-03:40', subject: 'Computer Networks', className: '2-A', room: '304' }),
+        createEntry({ time: '03:40-04:30', subject: 'FREE', className: '2-A' }),
+      ],
+      Tuesday: [
+        createEntry({ time: '09:10-10:00', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '10:00-10:50', subject: 'Operating Systems', className: '2-A', room: '301' }),
+        createEntry({ time: '10:50-11:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '11:40-12:30', subject: 'Software Engineering', className: '2-A', room: '302' }),
+        createEntry({ time: '01:10-02:00', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '02:00-02:50', subject: 'Web Development', className: '2-A', room: '301' }),
+        createEntry({ time: '02:50-03:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '03:40-04:30', subject: 'FREE', className: '2-A' }),
+      ],
+      Wednesday: [
+        createEntry({ time: '09:10-10:00', subject: 'Database Systems', className: '2-A', room: '301' }),
+        createEntry({ time: '10:00-10:50', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '10:50-11:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '11:40-12:30', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '01:10-02:00', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '02:00-02:50', subject: 'Computer Networks', className: '2-A', room: '304' }),
+        createEntry({ time: '02:50-03:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '03:40-04:30', subject: 'FREE', className: '2-A' }),
+      ],
+      Thursday: [
+        createEntry({ time: '09:10-10:00', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '10:00-10:50', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '10:50-11:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '11:40-12:30', subject: 'Software Engineering', className: '2-A', room: '302' }),
+        createEntry({ time: '01:10-02:00', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '02:00-02:50', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '02:50-03:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '03:40-04:30', subject: 'FREE', className: '2-A' }),
+      ],
+      Friday: [
+        createEntry({ time: '09:10-10:00', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '10:00-10:50', subject: 'Web Development', className: '2-A', room: '301' }),
+        createEntry({ time: '10:50-11:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '11:40-12:30', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '01:10-02:00', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '02:00-02:50', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '02:50-03:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '03:40-04:30', subject: 'FREE', className: '2-A' }),
+      ],
+      Saturday: [
+        createEntry({ time: '09:10-10:00', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '10:00-10:50', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '10:50-11:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '11:40-12:30', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '01:10-02:00', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '02:00-02:50', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '02:50-03:40', subject: 'FREE', className: '2-A' }),
+        createEntry({ time: '03:40-04:30', subject: 'FREE', className: '2-A' }),
+      ],
+    },
+    subjectAllocations: [],
+  },
+  '3-C': {
+    className: '3-C',
+    schedule: {
+      Monday: [
+        createEntry({ time: '09:10-10:00', subject: 'CS', subjectName: 'Cyber Security', facultyName: 'NEELA VINEETH', className: '3-C' }),
+        createEntry({ time: '10:00-10:50', subject: 'CNS', subjectName: 'Cryptography and Network Security', facultyName: 'D D SHIVA PRASAD', className: '3-C' }),
+        createEntry({ time: '10:50-11:40', subject: 'CNS', subjectName: 'Cryptography and Network Security', facultyName: 'D D SHIVA PRASAD', className: '3-C' }),
+        createEntry({ time: '11:40-12:30', subject: 'SPM', subjectName: 'Software Project Management', facultyName: 'MANGIPUDI SAI PRASANNA', className: '3-C' }),
+        createEntry({ time: '01:10-02:00', subject: 'AI', subjectName: 'Artificial Intelligence', facultyName: 'V KANAKESWARI', className: '3-C' }),
+        createEntry({ time: '02:00-02:50', subject: 'UEE', subjectName: 'Utilization of Electrical Energy', facultyName: 'GURLA ALIVENI', className: '3-C' }),
+        createEntry({ time: '02:50-03:40', subject: 'IPR', subjectName: 'Intellectual Property Rights', className: '3-C' }),
+        createEntry({ time: '03:40-04:30', subject: 'IPR', subjectName: 'Intellectual Property Rights', className: '3-C' }),
+      ],
+      Tuesday: [
+        createEntry({ time: '09:10-10:00', subject: 'CN', subjectName: 'Computer Networks', facultyName: 'KONA JANSI VENKATA MODHA SAI SRINIJA', className: '3-C' }),
+        createEntry({ time: '10:00-10:50', subject: 'CNS', subjectName: 'Cryptography and Network Security', facultyName: 'D D SHIVA PRASAD', className: '3-C' }),
+        createEntry({ time: '10:50-11:40', subject: 'CNS', subjectName: 'Cryptography and Network Security', facultyName: 'D D SHIVA PRASAD', className: '3-C' }),
+        createEntry({ time: '11:40-12:30', subject: 'SPM', subjectName: 'Software Project Management', facultyName: 'MANGIPUDI SAI PRASANNA', className: '3-C' }),
+        createEntry({ time: '01:10-02:00', subject: 'CNS', subjectName: 'Cryptography and Network Security', facultyName: 'D D SHIVA PRASAD', className: '3-C' }),
+        createEntry({ time: '02:00-02:50', subject: '--', className: '3-C' }),
+        createEntry({ time: '02:50-03:40', subject: '--', className: '3-C' }),
+        createEntry({ time: '03:40-04:30', subject: '--', className: '3-C' }),
+      ],
+      Wednesday: [
+        createEntry({ time: '09:10-10:00', subject: 'CN', subjectName: 'Computer Networks', facultyName: 'KONA JANSI VENKATA MODHA SAI SRINIJA', className: '3-C' }),
+        createEntry({ time: '10:00-10:50', subject: 'SPM', subjectName: 'Software Project Management', facultyName: 'MANGIPUDI SAI PRASANNA', className: '3-C' }),
+        createEntry({ time: '10:50-11:40', subject: 'CRT', subjectName: 'CRT', className: '3-C' }),
+        createEntry({ time: '11:40-12:30', subject: 'CRT', subjectName: 'CRT', className: '3-C' }),
+        createEntry({ time: '01:10-02:00', subject: 'CS', subjectName: 'Cyber Security', facultyName: 'NEELA VINEETH', className: '3-C' }),
+        createEntry({ time: '02:00-02:50', subject: 'UEE', subjectName: 'Utilization of Electrical Energy', facultyName: 'GURLA ALIVENI', className: '3-C' }),
+        createEntry({ time: '02:50-03:40', subject: 'COUNSELLING', subjectName: 'Counselling', className: '3-C' }),
+        createEntry({ time: '03:40-04:30', subject: 'CN', subjectName: 'Computer Networks', facultyName: 'KONA JANSI VENKATA MODHA SAI SRINIJA', className: '3-C' }),
+      ],
+      Thursday: [
+        createEntry({ time: '09:10-10:00', subject: 'AI', subjectName: 'Artificial Intelligence', facultyName: 'V KANAKESWARI', className: '3-C' }),
+        createEntry({ time: '10:00-10:50', subject: 'UEE', subjectName: 'Utilization of Electrical Energy', facultyName: 'GURLA ALIVENI', className: '3-C' }),
+        createEntry({ time: '10:50-11:40', subject: 'SPM', subjectName: 'Software Project Management', facultyName: 'MANGIPUDI SAI PRASANNA', className: '3-C' }),
+        createEntry({ time: '11:40-12:30', subject: 'CS', subjectName: 'Cyber Security', facultyName: 'NEELA VINEETH', className: '3-C' }),
+        createEntry({ time: '01:10-02:00', subject: 'CN', subjectName: 'Computer Networks', facultyName: 'KONA JANSI VENKATA MODHA SAI SRINIJA', className: '3-C' }),
+        createEntry({ time: '02:00-02:50', subject: 'LIBRARY', subjectName: 'Library', className: '3-C' }),
+        createEntry({ time: '02:50-03:40', subject: 'NPTEL', subjectName: 'NPTEL', className: '3-C' }),
+        createEntry({ time: '03:40-04:30', subject: 'SPORTS', subjectName: 'Sports', className: '3-C' }),
+      ],
+      Friday: [
+        createEntry({ time: '09:10-10:00', subject: 'AI', subjectName: 'Artificial Intelligence', facultyName: 'V KANAKESWARI', className: '3-C' }),
+        createEntry({ time: '10:00-10:50', subject: 'CS', subjectName: 'Cyber Security', facultyName: 'NEELA VINEETH', className: '3-C' }),
+        createEntry({ time: '10:50-11:40', subject: 'UEE', subjectName: 'Utilization of Electrical Energy', facultyName: 'GURLA ALIVENI', className: '3-C' }),
+        createEntry({ time: '11:40-12:30', subject: 'LIBRARY', subjectName: 'Library', className: '3-C' }),
+        createEntry({ time: '01:10-02:00', subject: 'CN', subjectName: 'Computer Networks', facultyName: 'KONA JANSI VENKATA MODHA SAI SRINIJA', className: '3-C' }),
+        createEntry({ time: '02:00-02:50', subject: '--', className: '3-C' }),
+        createEntry({ time: '02:50-03:40', subject: '--', className: '3-C' }),
+        createEntry({ time: '03:40-04:30', subject: '--', className: '3-C' }),
+      ],
+      Saturday: [
+        createEntry({ time: '09:10-10:00', subject: 'UEE', subjectName: 'Utilization of Electrical Energy', facultyName: 'GURLA ALIVENI', className: '3-C' }),
+        createEntry({ time: '10:00-10:50', subject: 'AI', subjectName: 'Artificial Intelligence', facultyName: 'V KANAKESWARI', className: '3-C' }),
+        createEntry({ time: '10:50-11:40', subject: 'AI', subjectName: 'Artificial Intelligence', facultyName: 'V KANAKESWARI', className: '3-C' }),
+        createEntry({ time: '11:40-12:30', subject: 'CS', subjectName: 'Cyber Security', facultyName: 'NEELA VINEETH', className: '3-C' }),
+        createEntry({ time: '01:10-02:00', subject: 'SIG', subjectName: 'Special Interest Group', className: '3-C' }),
+        createEntry({ time: '02:00-02:50', subject: 'SIG', subjectName: 'Special Interest Group', className: '3-C' }),
+        createEntry({ time: '02:50-03:40', subject: 'SIG', subjectName: 'Special Interest Group', className: '3-C' }),
+        createEntry({ time: '03:40-04:30', subject: 'SIG', subjectName: 'Special Interest Group', className: '3-C' }),
+      ],
+    },
+    subjectAllocations: [
+      { code: 'CN', subject: 'Computer Networks', facultyName: 'KONA JANSI VENKATA MODHA SAI SRINIJA' },
+      { code: 'CNS', subject: 'Cryptography and Network Security', facultyName: 'D D SHIVA PRASAD' },
+      { code: 'AI', subject: 'Artificial Intelligence', facultyName: 'V KANAKESWARI' },
+      { code: 'SPM', subject: 'Software Project Management', facultyName: 'MANGIPUDI SAI PRASANNA' },
+      { code: 'CS', subject: 'Cyber Security', facultyName: 'NEELA VINEETH' },
+      { code: 'UEE', subject: 'Utilization of Electrical Energy', facultyName: 'GURLA ALIVENI' },
+      { code: 'CN LAB', subject: 'Computer Networks Lab', facultyName: 'GUDALA RAJA NANDA KISHORE' },
+      { code: 'AI LAB', subject: 'Artificial Intelligence Lab', facultyName: 'V KANAKESWARI' },
+      { code: 'IPR', subject: 'Intellectual Property Rights', facultyName: '' },
+      { code: 'CRT', subject: 'CRT', facultyName: '' },
+      { code: 'COUNSELLING', subject: 'Counselling', facultyName: '' },
+      { code: 'LIBRARY', subject: 'Library', facultyName: '' },
+      { code: 'SPORTS', subject: 'Sports', facultyName: '' },
+      { code: 'SIG', subject: 'Special Interest Group', facultyName: '' },
+      { code: 'NPTEL', subject: 'NPTEL', facultyName: '' },
+    ],
+  },
+};
+
+const clone = (value) => JSON.parse(JSON.stringify(value));
+
+const normalizeClassKey = (value = '') => value.toString().trim().toUpperCase();
+
+export const getDemoTimetableResponse = (classId) => {
+  const classKey = normalizeClassKey(classId);
+  return clone(demoClassTimetables[classKey] || demoClassTimetables['2-A']);
+};

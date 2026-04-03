@@ -2,112 +2,118 @@ import Timetable from '../models/Timetable.js';
 import { Request, Response } from 'express';
 import asyncHandler from '../middleware/asyncHandler.js';
 import mongoose from 'mongoose';
+import { getDemoTimetableResponse, timetableDays } from '../config/timetableData.js';
 
-// Demo Data
-const demoTimetable = {
-  schedule: {
-    'Monday': [
-      { time: '09:10-10:00', label: 'Data Structures', class: '2-A', room: '301' },
-      { time: '10:00-10:50', label: 'Algorithms', class: '2-A', room: '302' },
-      { time: '10:50-11:40', label: 'FREE', room: '-' },
-      { time: '11:40-12:30', label: 'Operating Systems', class: '2-A', room: '301' },
-      { time: '12:30-01:10', label: 'LUNCH', room: '-' },
-      { time: '01:10-02:00', label: 'Database Systems', class: '2-A', room: '301' },
-      { time: '02:00-02:50', label: 'FREE', room: '-' },
-      { time: '02:50-03:40', label: 'Computer Networks', class: '2-A', room: '304' },
-      { time: '03:40-04:30', label: 'FREE', room: '-' }
-    ],
-    'Tuesday': [
-      { time: '09:10-10:00', label: 'FREE', room: '-' },
-      { time: '10:00-10:50', label: 'Operating Systems', class: '2-A', room: '301' },
-      { time: '10:50-11:40', label: 'FREE', room: '-' },
-      { time: '11:40-12:30', label: 'Software Engineering', class: '2-A', room: '302' },
-      { time: '12:30-01:10', label: 'LUNCH', room: '-' },
-      { time: '01:10-02:00', label: 'FREE', room: '-' },
-      { time: '02:00-02:50', label: 'Web Development', class: '2-A', room: '301' },
-      { time: '02:50-03:40', label: 'FREE', room: '-' },
-      { time: '03:40-04:30', label: 'FREE', room: '-' }
-    ],
-    'Wednesday': [
-      { time: '09:10-10:00', label: 'Database Systems', class: '2-A', room: '301' },
-      { time: '10:00-10:50', label: 'FREE', room: '-' },
-      { time: '10:50-11:40', label: 'FREE', room: '-' },
-      { time: '11:40-12:30', label: 'FREE', room: '-' },
-      { time: '12:30-01:10', label: 'LUNCH', room: '-' },
-      { time: '01:10-02:00', label: 'FREE', room: '-' },
-      { time: '02:00-02:50', label: 'Computer Networks', class: '2-A', room: '304' },
-      { time: '02:50-03:40', label: 'FREE', room: '-' },
-      { time: '03:40-04:30', label: 'FREE', room: '-' }
-    ],
-    'Thursday': [
-      { time: '09:10-10:00', label: 'FREE', room: '-' },
-      { time: '10:00-10:50', label: 'FREE', room: '-' },
-      { time: '10:50-11:40', label: 'FREE', room: '-' },
-      { time: '11:40-12:30', label: 'Software Engineering', class: '2-A', room: '302' },
-      { time: '12:30-01:10', label: 'LUNCH', room: '-' },
-      { time: '01:10-02:00', label: 'FREE', room: '-' },
-      { time: '02:00-02:50', label: 'FREE', room: '-' },
-      { time: '02:50-03:40', label: 'FREE', room: '-' },
-      { time: '03:40-04:30', label: 'FREE', room: '-' }
-    ],
-    'Friday': [
-      { time: '09:10-10:00', label: 'FREE', room: '-' },
-      { time: '10:00-10:50', label: 'Web Development', class: '2-A', room: '301' },
-      { time: '10:50-11:40', label: 'FREE', room: '-' },
-      { time: '11:40-12:30', label: 'FREE', room: '-' },
-      { time: '12:30-01:10', label: 'LUNCH', room: '-' },
-      { time: '01:10-02:00', label: 'FREE', room: '-' },
-      { time: '02:00-02:50', label: 'FREE', room: '-' },
-      { time: '02:50-03:40', label: 'FREE', room: '-' },
-      { time: '03:40-04:30', label: 'FREE', room: '-' }
-    ],
-    'Saturday': [
-      { time: '09:10-10:00', label: 'FREE', room: '-' },
-      { time: '10:00-10:50', label: 'FREE', room: '-' },
-      { time: '10:50-11:40', label: 'FREE', room: '-' },
-      { time: '11:40-12:30', label: 'FREE', room: '-' },
-      { time: '12:30-01:10', label: 'LUNCH', room: '-' },
-      { time: '01:10-02:00', label: 'FREE', room: '-' },
-      { time: '02:00-02:50', label: 'FREE', room: '-' },
-      { time: '02:50-03:40', label: 'FREE', room: '-' },
-      { time: '03:40-04:30', label: 'FREE', room: '-' }
-    ]
-  }
+const buildTimeSlot = (startTime: string, endTime: string) => `${startTime}-${endTime}`;
+
+const sortDaySchedule = (items: any[] = []) =>
+  [...items].sort((left, right) => left.time.localeCompare(right.time));
+
+const buildClassTimetableResponse = (entries: any[] = [], fallbackClassLabel = '') => {
+  const schedule: Record<string, any[]> = timetableDays.reduce((acc, day) => {
+    acc[day] = [];
+    return acc;
+  }, {} as Record<string, any[]>);
+
+  const allocationMap = new Map<string, { code: string; subject: string; facultyName: string }>();
+
+  entries.forEach((entry: any) => {
+    if (!schedule[entry.day]) {
+      schedule[entry.day] = [];
+    }
+
+    const code = entry.subjectId?.code || entry.subjectId?.name || 'SUBJECT';
+    const subject = entry.subjectId?.name || code;
+    const facultyName = entry.facultyId?.name || '';
+    const className = entry.classId?.name || fallbackClassLabel || '';
+
+    schedule[entry.day].push({
+      _id: entry._id,
+      time: buildTimeSlot(entry.startTime, entry.endTime),
+      subject: code,
+      label: code,
+      subjectName: subject,
+      facultyName,
+      class: className,
+      note: entry.note || '',
+      room: '',
+    });
+
+    if (!allocationMap.has(code)) {
+      allocationMap.set(code, {
+        code,
+        subject,
+        facultyName,
+      });
+    }
+  });
+
+  Object.keys(schedule).forEach((day) => {
+    schedule[day] = sortDaySchedule(schedule[day]);
+  });
+
+  return {
+    className: fallbackClassLabel,
+    schedule,
+    subjectAllocations: Array.from(allocationMap.values()),
+  };
 };
 
 export const getTimetableByClass = asyncHandler(async (req: Request, res: Response) => {
   if (mongoose.connection.readyState !== 1 || !mongoose.Types.ObjectId.isValid(req.params.classId)) {
-    return res.json(demoTimetable);
+    return res.json(getDemoTimetableResponse(req.params.classId));
   }
-  const timetable = await Timetable.find({ classId: req.params.classId }).populate('subjectId facultyId', 'name');
-  res.json(timetable);
+
+  const timetable = await Timetable.find({ classId: req.params.classId })
+    .populate('subjectId', 'name code')
+    .populate('facultyId', 'name')
+    .populate('classId', 'name');
+
+  if (!timetable.length) {
+    return res.json(getDemoTimetableResponse(req.params.classId));
+  }
+
+  res.json(buildClassTimetableResponse(timetable, req.params.classId));
 });
 
 export const getTimetableByFaculty = asyncHandler(async (req: Request, res: Response) => {
   if (mongoose.connection.readyState !== 1 || !mongoose.Types.ObjectId.isValid(req.params.facultyId)) {
-    return res.json(demoTimetable);
+    const fallback = getDemoTimetableResponse('2-A');
+    const schedule = Object.fromEntries(
+      Object.entries(fallback.schedule).map(([day, entries]) => [
+        day,
+        (entries as any[]).map((entry) => ({
+          ...entry,
+          label: entry.label || entry.subject,
+        })),
+      ]),
+    );
+
+    return res.json({ schedule });
   }
   const timetable = await Timetable.find({ facultyId: req.params.facultyId }).populate('subjectId classId', 'name');
-  
-  // Transform to the format expected by frontend if needed
-  // For now, let's just return the documents or a structured object
-  // The frontend expects { schedule: { Day: [...] } }
-  
-  const schedule: any = {
-    'Monday': [], 'Tuesday': [], 'Wednesday': [], 'Thursday': [], 'Friday': []
-  };
+
+  const schedule: any = timetableDays.reduce((acc, day) => {
+    acc[day] = [];
+    return acc;
+  }, {} as Record<string, any[]>);
 
   timetable.forEach((entry: any) => {
     if (schedule[entry.day]) {
       schedule[entry.day].push({
         _id: entry._id,
-        time: `${entry.startTime} - ${entry.endTime}`,
+        time: buildTimeSlot(entry.startTime, entry.endTime),
+        label: entry.subjectId?.name || 'Unknown',
         subject: entry.subjectId?.name || 'Unknown',
         class: entry.classId?.name || 'Unknown',
         room: 'TBD',
         note: entry.note
       });
     }
+  });
+
+  Object.keys(schedule).forEach((day) => {
+    schedule[day] = sortDaySchedule(schedule[day]);
   });
 
   res.json({ schedule });
