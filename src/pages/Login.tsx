@@ -199,14 +199,6 @@ const Login = () => {
               </>
             )}
 
-            <p className="rounded-[14px] border border-white/6 bg-white/[0.02] px-4 py-3 text-[11px] leading-5 text-zinc-500">
-              {role === 'student'
-                ? 'Demo student: roll CS2626 and password 2626 or DOB 2005-01-01.'
-                : role === 'faculty'
-                  ? 'Demo faculty: faculty@demo.com or SJ2626 with password faculty123.'
-                  : 'Demo admin: sumithkumar2626@gmail.com or SJ2626 with password admin123.'}
-            </p>
-
             {error && (
               <p className="rounded-[12px] border border-red-400/10 bg-red-400/5 px-3 py-2 text-xs text-red-200">
                 {error}
