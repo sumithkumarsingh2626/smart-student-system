@@ -1,3 +1,14 @@
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
+
+const globalForMongoose = globalThis;
+const mongooseCache = globalForMongoose.__smartStudentMongoCache || {
+  conn: null,
+  promise: null,
+};
+globalForMongoose.__smartStudentMongoCache = mongooseCache;
+
 const demoUsers = [
   {
     _id: 'demo_admin_id',
@@ -35,6 +46,8 @@ const demoUsers = [
   },
 ];
 
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const findDemoUser = ({ identifier, password, role }) => {
   const normalizedIdentifier = identifier?.trim().toLowerCase();
   const normalizedPassword = password?.trim();
@@ -60,13 +73,89 @@ const findDemoUser = ({ identifier, password, role }) => {
   });
 };
 
-export default function handler(req, res) {
-  console.log('[VERCEL API] Handler invoked:', {
-    method: req.method,
-    url: req.url,
-    path: req.path,
+const userSchema = new mongoose.Schema(
+  {
+    name: String,
+    email: String,
+    password: String,
+    role: String,
+    classId: mongoose.Schema.Types.Mixed,
+    class: String,
+    subjects: [mongoose.Schema.Types.Mixed],
+    dept: String,
+    roll: String,
+    dob: String,
+    loginId: String,
+    contact: String,
+    phone: String,
+    mobile: String,
+    photo: String,
+  },
+  {
+    collection: 'users',
+    strict: false,
+  },
+);
+
+const User = mongoose.models.User || mongoose.model('User', userSchema);
+
+const connectToDatabase = async () => {
+  if (mongooseCache.conn) {
+    return mongooseCache.conn;
+  }
+
+  if (!process.env.MONGO_URI) {
+    throw new Error('MONGO_URI is not configured');
+  }
+
+  if (!mongooseCache.promise) {
+    mongooseCache.promise = mongoose.connect(process.env.MONGO_URI, {
+      bufferCommands: false,
+    });
+  }
+
+  mongooseCache.conn = await mongooseCache.promise;
+  return mongooseCache.conn;
+};
+
+const buildIdentifierQuery = (identifier, role) => {
+  const exactMatch = new RegExp(`^${escapeRegExp(identifier.trim())}$`, 'i');
+
+  return {
+    role,
+    $or: [
+      { email: exactMatch },
+      { loginId: exactMatch },
+      { roll: exactMatch },
+    ],
+  };
+};
+
+const generateToken = (id) =>
+  jwt.sign({ id }, process.env.JWT_SECRET || 'your_jwt_secret_key_here', {
+    expiresIn: '30d',
   });
 
+const formatAuthUser = (user, token) => ({
+  _id: String(user._id),
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  dept: user.dept,
+  classId: user.classId,
+  class: user.class,
+  roll: user.roll,
+  loginId: user.loginId,
+  dob: user.dob,
+  subjects: user.subjects,
+  contact: user.contact,
+  phone: user.phone,
+  mobile: user.mobile,
+  photo: user.photo,
+  token,
+});
+
+const setCorsHeaders = (res) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -74,6 +163,10 @@ export default function handler(req, res) {
     'Access-Control-Allow-Headers',
     'X-CSRF-Token,X-Requested-With,Accept,Accept-Version,Content-Length,Content-MD5,Content-Type,Date,X-Api-Version,Authorization',
   );
+};
+
+export default async function handler(req, res) {
+  setCorsHeaders(res);
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -81,39 +174,58 @@ export default function handler(req, res) {
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    res.status(405).json({ message: 'Method not allowed' });
+    return;
   }
 
   const { email, password, role } = req.body || {};
+  const identifier = email?.trim();
+  const normalizedPassword = password?.trim();
 
-  console.log('[VERCEL API] Login attempt:', { email, role });
+  if (!identifier || !normalizedPassword || !role) {
+    res.status(400).json({ message: 'Identifier, password, and role are required' });
+    return;
+  }
+
+  let databaseError = null;
+
+  try {
+    await connectToDatabase();
+
+    const user = await User.findOne(buildIdentifierQuery(identifier, role)).lean();
+
+    if (user) {
+      const passwordMatches = await bcrypt.compare(normalizedPassword, user.password || '');
+      const dobMatches = role === 'student' && user.dob === normalizedPassword;
+
+      if (passwordMatches || dobMatches) {
+        res.status(200).json(formatAuthUser(user, generateToken(String(user._id))));
+        return;
+      }
+
+      res.status(401).json({ message: 'Invalid email, ID, roll number, or password' });
+      return;
+    }
+  } catch (error) {
+    databaseError = error;
+    console.error('[VERCEL API] MongoDB login error:', error);
+  }
 
   const matchedUser = findDemoUser({
-    identifier: email,
-    password,
+    identifier,
+    password: normalizedPassword,
     role,
   });
 
-  if (!matchedUser) {
-    console.log('[VERCEL API] Authentication failed');
-    return res.status(401).json({ message: 'Invalid credentials for the selected role' });
+  if (matchedUser) {
+    res.status(200).json(formatAuthUser(matchedUser, generateToken(matchedUser._id)));
+    return;
   }
 
-  console.log('[VERCEL API] Authentication successful for:', matchedUser.email);
+  if (databaseError) {
+    res.status(503).json({ message: 'Database login is not configured on the server' });
+    return;
+  }
 
-  const token = Buffer.from(JSON.stringify({ id: matchedUser._id })).toString('base64');
-
-  return res.status(200).json({
-    _id: matchedUser._id,
-    name: matchedUser.name,
-    email: matchedUser.email,
-    role: matchedUser.role,
-    dept: matchedUser.dept,
-    classId: matchedUser.classId,
-    class: matchedUser.class,
-    roll: matchedUser.roll,
-    loginId: matchedUser.loginId,
-    dob: matchedUser.dob,
-    token,
-  });
+  res.status(401).json({ message: 'Invalid credentials for the selected role' });
 }

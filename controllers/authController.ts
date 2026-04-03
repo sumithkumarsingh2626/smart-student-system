@@ -11,10 +11,66 @@ const generateToken = (id: string) => {
   });
 };
 
-export const registerUser = asyncHandler(async (req: Request, res: Response) => {
-  const { name, email, password, role, classId, subjects } = req.body;
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-  const userExists = await User.findOne({ email });
+const buildIdentifierQuery = (identifier: string, role: string) => {
+  const normalizedIdentifier = identifier.trim();
+  const exactMatch = new RegExp(`^${escapeRegExp(normalizedIdentifier)}$`, 'i');
+
+  return {
+    role,
+    $or: [
+      { email: exactMatch },
+      { loginId: exactMatch },
+      { roll: exactMatch },
+    ],
+  };
+};
+
+const formatAuthUser = (user: any, token: string) => ({
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  dept: user.dept,
+  classId: user.classId,
+  class: user.class,
+  roll: user.roll,
+  loginId: user.loginId,
+  dob: user.dob,
+  subjects: user.subjects,
+  contact: user.contact,
+  phone: user.phone,
+  mobile: user.mobile,
+  photo: user.photo,
+  token,
+});
+
+export const registerUser = asyncHandler(async (req: Request, res: Response) => {
+  const {
+    name,
+    email,
+    password,
+    role,
+    classId,
+    class: className,
+    subjects,
+    dept,
+    roll,
+    dob,
+    loginId,
+    contact,
+    phone,
+    mobile,
+    photo,
+  } = req.body;
+  const normalizedEmail = email?.trim().toLowerCase();
+
+  if (!normalizedEmail || !password || !role || !name) {
+    return res.status(400).json({ message: 'Name, email, password, and role are required' });
+  }
+
+  const userExists = await User.findOne({ email: normalizedEmail });
 
   if (userExists) {
     return res.status(400).json({ message: 'User already exists' });
@@ -22,21 +78,24 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
 
   const user = await User.create({
     name,
-    email,
+    email: normalizedEmail,
     password,
     role,
     classId,
-    subjects
+    class: className || classId,
+    subjects,
+    dept,
+    roll,
+    dob,
+    loginId,
+    contact,
+    phone,
+    mobile,
+    photo,
   });
 
   if (user) {
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: generateToken(user._id.toString()),
-    });
+    res.status(201).json(formatAuthUser(user, generateToken(user._id.toString())));
   } else {
     res.status(400).json({ message: 'Invalid user data' });
   }
@@ -44,54 +103,42 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
 
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password, role } = req.body;
+  const identifier = email?.trim();
+  const normalizedPassword = password?.trim();
 
-  console.log(`Login attempt - Email: ${email}, Role: ${role}`);
+  console.log(`Login attempt - Identifier: ${identifier}, Role: ${role}`);
 
-  // Check demo users first (works even without DB)
-  const demoUser = findDemoUser({ identifier: email, password, role });
-  if (demoUser) {
-    console.log(`Demo user found: ${demoUser.email}`);
-    return res.json({
-      _id: demoUser._id,
-      name: demoUser.name,
-      email: demoUser.email,
-      role: demoUser.role,
-      dept: demoUser.dept,
-      classId: demoUser.classId,
-      class: demoUser.class,
-      roll: demoUser.roll,
-      loginId: demoUser.loginId,
-      dob: demoUser.dob,
-      token: generateToken(demoUser._id),
-    });
+  if (!identifier || !normalizedPassword || !role) {
+    return res.status(400).json({ message: 'Identifier, password, and role are required' });
+  }
+
+  if (mongoose.connection.readyState === 1) {
+    const user: any = await User.findOne(buildIdentifierQuery(identifier, role));
+
+    if (user) {
+      const passwordMatches = await user.matchPassword(normalizedPassword);
+      const dobMatches = role === 'student' && user.dob === normalizedPassword;
+
+      if (passwordMatches || dobMatches) {
+        console.log(`MongoDB user authenticated: ${user.email}`);
+        return res.json(formatAuthUser(user, generateToken(user._id.toString())));
+      }
+
+      console.log(`Invalid password for identifier: ${identifier}`);
+      return res.status(401).json({ message: 'Invalid email, ID, roll number, or password' });
+    }
   }
 
   console.log(`Database connection state: ${mongoose.connection.readyState}`);
-  
-  if (mongoose.connection.readyState !== 1) {
-    console.log('Database not connected, returning error');
-    return res.status(401).json({ message: 'Invalid credentials for the selected role' });
+
+  const demoUser = findDemoUser({ identifier, password: normalizedPassword, role });
+  if (demoUser) {
+    console.log(`Demo user authenticated: ${demoUser.email}`);
+    return res.json(formatAuthUser(demoUser, generateToken(demoUser._id)));
   }
 
-  const user: any = await User.findOne({ email, role });
-
-  if (user && (await user.matchPassword(password))) {
-    console.log(`User found in database: ${user.email}`);
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      dept: user.dept,
-      classId: user.classId,
-      roll: user.roll,
-      dob: user.dob,
-      token: generateToken(user._id.toString()),
-    });
-  } else {
-    console.log(`Invalid credentials for email: ${email}`);
-    res.status(401).json({ message: 'Invalid email or password' });
-  }
+  console.log(`No user found for identifier: ${identifier}`);
+  res.status(401).json({ message: 'Invalid credentials for the selected role' });
 });
 
 export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
