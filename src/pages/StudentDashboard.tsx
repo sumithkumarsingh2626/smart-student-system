@@ -248,14 +248,14 @@ const Attendance = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
           {subjects.map((sub, idx) => (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
               key={sub}
-              className="p-8 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-xl relative overflow-hidden group"
+              className="p-5 sm:p-6 lg:p-8 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-xl relative overflow-hidden group"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-100/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110" />
               
@@ -306,7 +306,7 @@ const Attendance = () => {
   };
 
   const renderSubjects = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
       {subjects.map((sub, idx) => (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -314,7 +314,7 @@ const Attendance = () => {
           transition={{ delay: idx * 0.1 }}
           key={sub}
           onClick={() => { setSelectedSubject(sub); setView('months'); }}
-          className="p-8 bg-zinc-900 border border-zinc-800 rounded-3xl hover:border-zinc-700 cursor-pointer transition-all group shadow-xl"
+          className="p-5 sm:p-6 lg:p-8 bg-zinc-900 border border-zinc-800 rounded-3xl hover:border-zinc-700 cursor-pointer transition-all group shadow-xl"
         >
           <div className="w-12 h-12 bg-zinc-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-zinc-100 group-hover:text-zinc-950 transition-all">
             <BookOpen className="w-6 h-6" />
@@ -327,7 +327,7 @@ const Attendance = () => {
   );
 
   const renderMonths = () => (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {months.map((month, idx) => (
         <motion.button
           initial={{ opacity: 0, scale: 0.9 }}
@@ -349,10 +349,10 @@ const Attendance = () => {
     const days = eachDayOfInterval({ start: startOfWeek(start), end: endOfWeek(end) });
 
     return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
-        <div className="flex items-center justify-between mb-8">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
           <h3 className="text-2xl font-bold text-zinc-100">{format(selectedMonth, 'MMMM yyyy')}</h3>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-green-500 rounded-full" />
               <span className="text-xs text-zinc-500">Present</span>
@@ -364,7 +364,7 @@ const Attendance = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
             <div key={d} className="text-center text-xs font-bold text-zinc-600 uppercase tracking-widest py-2">{d}</div>
           ))}
@@ -404,8 +404,8 @@ const Attendance = () => {
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="flex items-center gap-4 mb-8">
+    <div className="dashboard-page dashboard-page--wide">
+      <div className="dashboard-header mb-6 sm:mb-8">
         {view !== 'summary' && (
           <button 
             onClick={() => setView(view === 'calendar' ? 'months' : view === 'months' ? 'subjects' : 'summary')}
@@ -415,7 +415,7 @@ const Attendance = () => {
           </button>
         )}
         <div>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-1">Attendance</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-1">Attendance</h1>
           <p className="text-zinc-500">
             {view === 'summary' ? 'Overview of your attendance' :
              view === 'subjects' ? 'Select a subject to view attendance' : 
@@ -504,9 +504,9 @@ const Messages = () => {
   const safeMessages = Array.isArray(messages) ? messages : [];
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="dashboard-page dashboard-page--medium">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-zinc-100 mb-2">Messages</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Messages</h1>
         <p className="text-zinc-500">Updates and announcements from your faculty</p>
       </div>
 
@@ -522,7 +522,7 @@ const Messages = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
             key={msg._id || msg.id || `${msg.content}-${idx}`}
-            className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl"
+            className="bg-zinc-900 border border-zinc-800 rounded-3xl p-4 sm:p-6 shadow-xl"
           >
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
@@ -601,14 +601,14 @@ const Timetable = () => {
   }, [profile]);
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="dashboard-page dashboard-page--wide">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-zinc-100 mb-2">Class Timetable</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Class Timetable</h1>
         <p className="text-zinc-500">Weekly schedule for class {profile?.class}</p>
       </div>
 
-      <div className="overflow-x-auto rounded-3xl border border-zinc-800 bg-zinc-900 shadow-2xl">
-        <table className="w-full border-collapse">
+      <div className="dashboard-table-shell rounded-3xl border border-zinc-800 bg-zinc-900 shadow-2xl">
+        <table className="dashboard-table w-full border-collapse">
           <thead>
             <tr className="bg-zinc-800/50">
               <th className="p-4 border-b border-r border-zinc-800 text-xs font-bold text-zinc-500 uppercase tracking-widest w-32">
@@ -693,24 +693,24 @@ const Marks = () => {
 
   if (loading) {
     return (
-      <div className="p-8 flex items-center justify-center min-h-[60vh]">
+      <div className="dashboard-page dashboard-page--medium flex items-center justify-center min-h-[60vh]">
         <div className="w-8 h-8 border-4 border-zinc-800 border-t-zinc-100 rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <div className="dashboard-page dashboard-page--wide dashboard-stack">
+      <div className="dashboard-header">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Academic Marks</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Academic Marks</h1>
           <p className="text-zinc-500">View your semester results and performance history</p>
         </div>
 
         {allResults.length > 1 && (
-          <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 p-1.5 rounded-xl">
+          <div className="dashboard-actions items-center rounded-xl border border-zinc-800 bg-zinc-900 p-1.5">
             <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-2">History</span>
-            <div className="flex gap-1">
+            <div className="flex flex-wrap gap-1">
               {allResults.map((res) => (
                 <button
                   key={res.semester}
@@ -736,12 +736,12 @@ const Marks = () => {
           animate={{ opacity: 1, y: 0 }}
           className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl"
         >
-          <div className="p-8 border-b border-zinc-800 bg-zinc-900/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="p-5 sm:p-6 lg:p-8 border-b border-zinc-800 bg-zinc-900/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
               <h2 className="text-2xl font-bold text-zinc-100 mb-1">{currentResult.semester} Result</h2>
               <p className="text-zinc-500 font-mono text-sm">Exam: {currentResult.examType || 'Semester End'}</p>
             </div>
-            <div className="flex gap-8">
+            <div className="flex flex-wrap gap-4 sm:gap-8">
               <div className="text-center">
                 <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">SGPA</p>
                 <p className="text-2xl font-bold text-zinc-100">{currentResult.sgpa || '8.5'}</p>
@@ -753,9 +753,9 @@ const Marks = () => {
             </div>
           </div>
 
-          <div className="p-8">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
+          <div className="p-5 sm:p-6 lg:p-8">
+            <div className="dashboard-table-shell">
+              <table className="dashboard-table w-full text-sm text-left">
                 <thead>
                   <tr className="border-b border-zinc-800">
                     <th className="pb-4 font-bold text-zinc-500 uppercase tracking-widest text-[10px]">Course Name</th>
@@ -827,7 +827,7 @@ const Profile = () => {
     <div className="border border-zinc-800 rounded-2xl overflow-hidden mb-4 bg-zinc-900 shadow-lg">
       <button 
         onClick={() => setActiveSection(activeSection === title ? null : title)}
-        className="w-full flex items-center justify-between p-6 hover:bg-zinc-800 transition-all group"
+        className="w-full flex items-center justify-between p-4 sm:p-6 hover:bg-zinc-800 transition-all group"
       >
         <div className="flex items-center gap-3">
           <ChevronRight className={cn(
@@ -850,7 +850,7 @@ const Profile = () => {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <div className="p-8 border-t border-zinc-800 bg-zinc-900/50">
+            <div className="p-4 sm:p-6 lg:p-8 border-t border-zinc-800 bg-zinc-900/50">
               {children}
             </div>
           </motion.div>
@@ -860,13 +860,13 @@ const Profile = () => {
   );
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-zinc-100 mb-8">Student Profile</h1>
+    <div className="dashboard-page dashboard-page--wide">
+      <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-6 sm:mb-8">Student Profile</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 text-center shadow-2xl">
-            <div className="w-32 h-32 bg-zinc-800 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-zinc-700 shadow-inner overflow-hidden">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 text-center shadow-2xl">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 bg-zinc-800 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-zinc-700 shadow-inner overflow-hidden">
               {studentData?.photo ? (
                 <img src={studentData.photo} alt={profile?.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               ) : (
@@ -880,7 +880,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-2xl">
             <h3 className="font-bold text-zinc-100 mb-6 flex items-center gap-2">
               <DollarSign className="w-5 h-5" /> Fee Details
             </h3>
@@ -1087,14 +1087,14 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold text-zinc-100 mb-8">Settings</h1>
+    <div className="dashboard-page dashboard-page--compact">
+      <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-6 sm:mb-8">Settings</h1>
       
       <div className="space-y-8">
         <section>
           <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Profile Settings</h2>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 space-y-6 shadow-2xl">
-            <div className="flex items-center gap-6">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 space-y-6 shadow-2xl">
+            <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
               <div className="w-24 h-24 bg-zinc-800 rounded-2xl flex items-center justify-center border border-zinc-700 overflow-hidden relative group">
                 {photo ? (
                   <img src={photo} alt="Profile" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -1288,7 +1288,7 @@ const StudentDashboard = () => {
         <Menu className="h-5 w-5" />
       </button>
       <main className="min-h-screen lg:pl-[288px]">
-        <div className="h-screen overflow-y-auto premium-scrollbar pt-16 lg:pt-0">
+        <div className="min-h-[100dvh] overflow-y-auto premium-scrollbar pt-16 lg:pt-0">
           <Routes>
             <Route path="/" element={<Attendance />} />
             <Route path="/timetable" element={<Timetable />} />

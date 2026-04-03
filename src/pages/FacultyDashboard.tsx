@@ -362,9 +362,9 @@ const Classes = () => {
   };
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="dashboard-page dashboard-page--wide dashboard-stack">
       <div>
-        <h1 className="text-3xl font-bold text-zinc-100 mb-2">Today's Schedule</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Today's Schedule</h1>
         <p className="text-zinc-500">{format(new Date(), 'EEEE, MMMM do')}</p>
       </div>
 
@@ -385,15 +385,15 @@ const Classes = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: idx * 0.1 }}
               key={classKey}
-              className="rounded-3xl border border-zinc-800 bg-zinc-900 p-6 shadow-xl transition-all hover:border-zinc-700"
+              className="rounded-3xl border border-zinc-800 bg-zinc-900 p-4 sm:p-5 lg:p-6 shadow-xl transition-all hover:border-zinc-700"
             >
               <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-                <div className="flex items-center gap-6">
-                  <div className="w-24 text-center">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+                  <div className="w-full text-left sm:w-24 sm:text-center">
                     <p className="mb-1 text-xs font-bold uppercase tracking-widest text-zinc-500">Time</p>
                     <p className="text-lg font-mono text-zinc-100">{cls.time}</p>
                   </div>
-                  <div className="h-12 w-px bg-zinc-800" />
+                  <div className="hidden h-12 w-px bg-zinc-800 sm:block" />
                   <div>
                     <p className="mb-1 text-xs font-bold uppercase tracking-widest text-zinc-500">Class</p>
                     <p className="text-xl font-bold text-zinc-100">{cls.label}</p>
@@ -585,7 +585,7 @@ const Timetable = () => {
 
   if (!timetable) {
     return (
-      <div className="p-8 flex flex-col items-center justify-center min-h-[60vh]">
+      <div className="dashboard-page dashboard-page--medium flex flex-col items-center justify-center min-h-[60vh]">
         <Calendar className="w-16 h-16 text-zinc-800 mb-6" />
         <h2 className="text-2xl font-bold text-zinc-100 mb-2">No Timetable Found</h2>
         <p className="text-zinc-500 mb-8 text-center max-w-md">
@@ -603,13 +603,13 @@ const Timetable = () => {
   }
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
+    <div className="dashboard-page dashboard-page--wide">
+      <div className="dashboard-header mb-6 sm:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Weekly Timetable</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Weekly Timetable</h1>
           <p className="text-zinc-500">Manage your weekly class schedule</p>
         </div>
-        <div className="flex gap-4">
+        <div className="dashboard-actions">
           {editing && (
             <button
               onClick={() => { setEditing(false); fetchTimetable(); }}
@@ -630,8 +630,8 @@ const Timetable = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-3xl border border-zinc-800 bg-zinc-900 shadow-2xl">
-        <table className="w-full border-collapse">
+      <div className="dashboard-table-shell rounded-3xl border border-zinc-800 bg-zinc-900 shadow-2xl">
+        <table className="dashboard-table w-full border-collapse">
           <thead>
             <tr className="bg-zinc-800/50">
               <th className="p-4 border-b border-r border-zinc-800 text-xs font-bold text-zinc-500 uppercase tracking-widest w-32">
@@ -695,7 +695,7 @@ const Timetable = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 w-full max-w-lg shadow-2xl"
+              className="dashboard-modal-card bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 w-full max-w-lg shadow-2xl"
             >
               <div className="flex justify-between items-center mb-6">
                 <div>
@@ -818,9 +818,9 @@ const Attendance = () => {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="dashboard-page dashboard-page--medium">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-zinc-100 mb-2">Mark Attendance</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Mark Attendance</h1>
         <p className="text-zinc-500">
           {requestedClass
             ? `Opened ${requestedClass}${requestedSubject ? ` for ${requestedSubject}` : ''}${requestedTime ? ` at ${requestedTime}` : ''}.`
@@ -828,8 +828,8 @@ const Attendance = () => {
         </p>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
-        <div className="flex items-center gap-4 mb-8">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-2xl">
+        <div className="flex flex-col items-start gap-4 mb-6 sm:mb-8 sm:flex-row sm:items-center">
           <Filter className="w-5 h-5 text-zinc-500" />
           <select
             value={selectedClass}
@@ -843,7 +843,7 @@ const Attendance = () => {
 
         {selectedClass && (
           <div className="space-y-4">
-            <div className="flex justify-between items-center px-4 py-2 border-b border-zinc-800 text-xs font-bold text-zinc-500 uppercase tracking-widest">
+            <div className="flex justify-between items-center gap-4 px-4 py-2 border-b border-zinc-800 text-xs font-bold text-zinc-500 uppercase tracking-widest">
               <span>Student Name</span>
               <span>Status</span>
             </div>
@@ -851,8 +851,8 @@ const Attendance = () => {
               const studentId = student.id || student._id;
 
               return (
-                <div key={studentId} className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-2xl border border-zinc-800">
-                  <div className="flex items-center gap-3">
+                <div key={studentId} className="flex flex-col gap-4 p-4 bg-zinc-800/50 rounded-2xl border border-zinc-800 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
                     <div className="w-10 h-10 bg-zinc-700 rounded-full flex items-center justify-center text-zinc-400">
                       <UserIcon className="w-5 h-5" />
                     </div>
@@ -861,7 +861,7 @@ const Attendance = () => {
                       <p className="text-xs text-zinc-500">{student.roll}</p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 self-end sm:self-auto">
                     <button
                       onClick={() => setAttendance(prev => ({ ...prev, [studentId]: 'P' }))}
                       className={cn(
@@ -1001,8 +1001,8 @@ const MarksManager = () => {
 
   if (selectedStudent && studentResult) {
     return (
-      <div className="p-8 max-w-6xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
+      <div className="dashboard-page dashboard-page--wide">
+        <div className="dashboard-header mb-6">
           <button
             onClick={() => setSelectedStudent(null)}
             className="flex items-center gap-2 text-zinc-500 hover:text-zinc-100 transition-colors"
@@ -1012,9 +1012,9 @@ const MarksManager = () => {
           </button>
 
           {allResults.length > 1 && (
-            <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 p-1.5 rounded-xl">
+            <div className="dashboard-actions items-center rounded-xl border border-zinc-800 bg-zinc-900 p-1.5">
               <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-2">Result History</span>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {allResults.map((res) => (
                   <button
                     key={res.semester}
@@ -1040,10 +1040,10 @@ const MarksManager = () => {
           className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl"
         >
           {/* Result Header - Visual Representation */}
-          <div className="p-8 border-b border-zinc-800 bg-zinc-900/50">
+          <div className="p-5 sm:p-6 lg:p-8 border-b border-zinc-800 bg-zinc-900/50">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-              <div className="flex items-center gap-8">
-                <div className="w-28 h-28 rounded-2xl bg-zinc-800 flex items-center justify-center overflow-hidden border border-zinc-700 shadow-inner">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-8">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-zinc-800 flex items-center justify-center overflow-hidden border border-zinc-700 shadow-inner">
                   {selectedStudent.photoURL ? (
                     <img src={selectedStudent.photoURL} alt={selectedStudent.name} className="w-full h-full object-cover" />
                   ) : (
@@ -1059,7 +1059,7 @@ const MarksManager = () => {
                   </div>
                 </div>
               </div>
-              <div className="text-right">
+              <div className="text-left md:text-right">
                 <div className="inline-block px-4 py-2 bg-zinc-800 rounded-xl border border-zinc-700">
                   <span className="text-xs text-zinc-400 font-bold uppercase tracking-widest">{studentResult.semester}</span>
                 </div>
@@ -1068,9 +1068,9 @@ const MarksManager = () => {
           </div>
 
           {/* Result Body */}
-          <div className="p-8">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
+          <div className="p-5 sm:p-6 lg:p-8">
+            <div className="dashboard-table-shell">
+              <table className="dashboard-table w-full text-sm text-left">
                 <thead>
                   <tr className="border-b border-zinc-800">
                     <th className="pb-4 font-bold text-zinc-500 uppercase tracking-widest text-[10px]">S.No</th>
@@ -1115,7 +1115,7 @@ const MarksManager = () => {
             </div>
 
             {/* Result Footer Stats */}
-            <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="mt-10 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
               <div className="p-6 bg-zinc-800/50 rounded-2xl border border-zinc-800 text-center">
                 <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-2">SGPA</p>
                 <p className="text-2xl font-black text-zinc-100">{studentResult.sgpa}</p>
@@ -1140,13 +1140,13 @@ const MarksManager = () => {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto space-y-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    <div className="dashboard-page dashboard-page--wide dashboard-stack">
+      <div className="dashboard-header">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Semester Exam Results</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Semester Exam Results</h1>
           <p className="text-zinc-500">Manage and view student academic performance</p>
         </div>
-        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4">
+        <div className="dashboard-actions flex-col md:flex-row items-stretch md:items-center">
           <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 p-2 rounded-2xl flex-1">
             <Search className="w-5 h-5 text-zinc-500 ml-2" />
             <input
@@ -1215,7 +1215,7 @@ const MarksManager = () => {
           )}
         </div>
       ) : (
-        <div className="bg-zinc-900/50 border border-dashed border-zinc-800 rounded-3xl p-20 text-center">
+        <div className="bg-zinc-900/50 border border-dashed border-zinc-800 rounded-3xl p-8 sm:p-12 lg:p-20 text-center">
           <div className="w-20 h-20 bg-zinc-900 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-zinc-800 shadow-2xl">
             <Search className="w-10 h-10 text-zinc-700" />
           </div>
@@ -1333,13 +1333,13 @@ const Message = () => {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="dashboard-page dashboard-page--medium">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-zinc-100 mb-2">Broadcast Message</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Broadcast Message</h1>
         <p className="text-zinc-500">Send updates and announcements to your classes</p>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl space-y-8">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-2xl space-y-8">
         <div>
           <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4 block">Target Audience</label>
           <div className="flex flex-wrap gap-2">
@@ -1364,10 +1364,10 @@ const Message = () => {
         <div>
           <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4 block">Message Content</label>
           <div className="relative bg-zinc-800 border border-zinc-700 rounded-2xl overflow-hidden">
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full bg-transparent p-6 text-zinc-100 focus:outline-none min-h-[150px]"
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="w-full bg-transparent p-4 sm:p-6 text-zinc-100 focus:outline-none min-h-[150px]"
               placeholder="Type your announcement here..."
             />
             
@@ -1383,8 +1383,8 @@ const Message = () => {
               </div>
             )}
 
-            <div className="p-4 bg-zinc-800/50 border-t border-zinc-700 flex items-center justify-between">
-              <div className="flex gap-2">
+             <div className="p-4 bg-zinc-800/50 border-t border-zinc-700 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+               <div className="flex flex-wrap gap-2">
                 <button onClick={() => simulateFileUpload('file')} className="p-2 text-zinc-500 hover:text-zinc-200 transition-all" title="Attach File"><FileText className="w-5 h-5" /></button>
                 <button onClick={() => simulateFileUpload('image')} className="p-2 text-zinc-500 hover:text-zinc-200 transition-all" title="Attach Image"><ImageIcon className="w-5 h-5" /></button>
                 <button className="p-2 text-zinc-500 hover:text-zinc-200 transition-all" title="Voice Message (UI Only)"><Mic className="w-5 h-5" /></button>
@@ -1402,7 +1402,7 @@ const Message = () => {
       </div>
 
       {historyLoading ? (
-        <div className="mt-12 rounded-3xl border border-dashed border-zinc-800 bg-zinc-900/50 p-20 text-center">
+        <div className="mt-12 rounded-3xl border border-dashed border-zinc-800 bg-zinc-900/50 p-8 sm:p-12 lg:p-20 text-center">
           <MessageSquare className="w-12 h-12 text-zinc-700 mx-auto mb-4 animate-pulse" />
           <p className="text-zinc-500">Loading message history...</p>
         </div>
@@ -1411,8 +1411,8 @@ const Message = () => {
           <h2 className="text-xl font-bold text-zinc-100 px-2">Broadcast History</h2>
           <div className="space-y-4">
             {safeHistory.map((msg, index) => (
-              <div key={msg._id || msg.id || `${msg.content}-${index}`} className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl">
-                <div className="flex justify-between items-start mb-4">
+              <div key={msg._id || msg.id || `${msg.content}-${index}`} className="bg-zinc-900 border border-zinc-800 rounded-3xl p-4 sm:p-6 shadow-xl">
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-start mb-4">
                   <div className="flex flex-wrap gap-2">
                     {Array.isArray(msg.classes) && msg.classes.length > 0 ? msg.classes.map((c: string) => (
                       <span key={c} className="px-2 py-1 bg-zinc-800 rounded-lg text-[10px] font-bold text-zinc-400 uppercase tracking-widest border border-zinc-700">
@@ -1444,7 +1444,7 @@ const Message = () => {
           </div>
         </div>
       ) : (
-        <div className="mt-12 rounded-3xl border border-dashed border-zinc-800 bg-zinc-900/50 p-20 text-center">
+        <div className="mt-12 rounded-3xl border border-dashed border-zinc-800 bg-zinc-900/50 p-8 sm:p-12 lg:p-20 text-center">
           <MessageSquare className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
           <p className="text-zinc-500">No broadcast history yet.</p>
         </div>
@@ -1588,15 +1588,15 @@ const StudentProfile = () => {
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
+    <div className="dashboard-page dashboard-page--wide">
+      <div className="dashboard-header mb-6 sm:mb-8">
         <button 
           onClick={() => navigate('/faculty/students')}
           className="flex items-center gap-2 text-zinc-500 hover:text-zinc-100 transition-all"
         >
           <ChevronLeft className="w-5 h-5" /> Back to Directory
         </button>
-        <div className="flex gap-4">
+        <div className="dashboard-actions">
           {isEditing ? (
             <>
               <button 
@@ -1624,10 +1624,10 @@ const StudentProfile = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 text-center shadow-2xl">
-            <div className="w-32 h-32 bg-zinc-800 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-zinc-700 shadow-inner overflow-hidden relative group">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 text-center shadow-2xl">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 bg-zinc-800 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-zinc-700 shadow-inner overflow-hidden relative group">
               {editedStudent?.photo ? (
                 <img src={editedStudent.photo} alt={student.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               ) : (
@@ -1662,7 +1662,7 @@ const StudentProfile = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-2xl">
             <h3 className="font-bold text-zinc-100 mb-6 flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-500" /> Attendance Overview
             </h3>
@@ -1713,7 +1713,7 @@ const StudentProfile = () => {
         </div>
 
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-2xl">
             <h3 className="font-bold text-zinc-100 mb-8 pb-4 border-b border-zinc-800">Personal Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <BioField label="Admission No" value={editedStudent?.admissionNo} field="admissionNo" />
@@ -1743,7 +1743,7 @@ const StudentProfile = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-2xl">
             <h3 className="font-bold text-zinc-100 mb-8 pb-4 border-b border-zinc-800">Parent's Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <BioField label="Father Name" value={editedStudent?.parents?.father?.name} field="name" section="parents_father" />
@@ -1760,7 +1760,7 @@ const StudentProfile = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-2xl">
             <h3 className="font-bold text-zinc-100 mb-8 pb-4 border-b border-zinc-800">Education Details</h3>
             <div className="space-y-8">
               <div className="space-y-4">
@@ -1788,7 +1788,7 @@ const StudentProfile = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-2xl">
             <h3 className="font-bold text-zinc-100 mb-8 pb-4 border-b border-zinc-800">Guardian Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <BioField label="Guardian Name" value={editedStudent?.guardian?.name} field="name" section="guardian" />
@@ -1798,7 +1798,7 @@ const StudentProfile = () => {
             </div>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-2xl">
             <h3 className="font-bold text-zinc-100 mb-6 flex items-center gap-2">
               <FileText className="w-5 h-5 text-blue-500" /> Academic Marks History
             </h3>
@@ -1900,15 +1900,15 @@ const StudentsList = () => {
   );
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
+    <div className="dashboard-page dashboard-page--wide">
+      <div className="dashboard-header mb-6 sm:mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-zinc-100 mb-2">Student Directory</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Student Directory</h1>
           <p className="text-zinc-500">Search and manage student profiles</p>
         </div>
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 bg-zinc-100 text-zinc-950 px-6 py-3 rounded-2xl font-bold hover:bg-zinc-200 transition-all shadow-lg"
+          className="flex w-full items-center justify-center gap-2 bg-zinc-100 text-zinc-950 px-6 py-3 rounded-2xl font-bold hover:bg-zinc-200 transition-all shadow-lg sm:w-auto"
         >
           <Plus className="w-5 h-5" />
           Add Student
@@ -1926,7 +1926,7 @@ const StudentsList = () => {
             className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl pl-12 pr-4 py-3 text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-100"
           />
         </div>
-        <div className="flex gap-4">
+        <div className="flex w-full gap-4 md:w-auto">
           <div className="relative">
             <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
             <select
@@ -1982,7 +1982,7 @@ const StudentsList = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 w-full max-w-lg shadow-2xl"
+              className="dashboard-modal-card bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 w-full max-w-lg shadow-2xl"
             >
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-zinc-100">Add New Student</h2>
@@ -2020,7 +2020,7 @@ const StudentsList = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="dashboard-form-grid-2">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Full Name</label>
                     <input
@@ -2052,7 +2052,7 @@ const StudentsList = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="dashboard-form-grid-2">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Class</label>
                     <select
@@ -2073,7 +2073,7 @@ const StudentsList = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="dashboard-form-grid-2">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Date of Birth</label>
                     <input
@@ -2121,8 +2121,8 @@ const Students = () => {
 
 const SettingsPage = () => {
   return (
-    <div className="p-8 max-w-2xl">
-      <h1 className="text-3xl font-bold text-zinc-100 mb-8">Settings</h1>
+    <div className="dashboard-page dashboard-page--compact">
+      <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-6 sm:mb-8">Settings</h1>
       
       <div className="space-y-8">
         <section>
@@ -2160,9 +2160,9 @@ const SettingsPage = () => {
 
 const AdminPanel = () => {
   return (
-    <div className="p-8">
+    <div className="dashboard-page dashboard-page--wide">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-zinc-100 mb-2">Admin Control Panel</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-zinc-100 mb-2">Admin Control Panel</h1>
         <p className="text-zinc-500">Overall system management and analytics</p>
       </div>
 
@@ -2179,7 +2179,7 @@ const AdminPanel = () => {
         ))}
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 sm:p-6 lg:p-8 shadow-2xl">
         <h3 className="text-xl font-bold text-zinc-100 mb-6">System Logs</h3>
         <div className="space-y-4">
           {[
@@ -2216,7 +2216,7 @@ const FacultyDashboard = () => {
         <Menu className="h-5 w-5" />
       </button>
       <main className="min-h-screen lg:pl-[288px]">
-        <div className="h-screen overflow-y-auto premium-scrollbar pt-16 lg:pt-0">
+        <div className="min-h-[100dvh] overflow-y-auto premium-scrollbar pt-16 lg:pt-0">
           <Routes>
             <Route path="/" element={<Classes />} />
             <Route path="/timetable" element={<Timetable />} />
