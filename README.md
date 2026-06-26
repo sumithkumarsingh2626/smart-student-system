@@ -13,5 +13,5 @@ Id:- faculty@demo.com
 Pass:- faculty123
 
 Admin login
-Id:- *************
+Id:- sumithkumar2626@gmail.com
 Pass:- admin123
